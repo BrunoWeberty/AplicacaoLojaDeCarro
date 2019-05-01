@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Loja de Carros</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<!-- JQuery -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<!-- Bootstrap JS -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        
+    </head>
+    <body>
+        <div id="conteudo" class="container"> </div>
+        
+        <div id="conteudo" class="container">
+        <div class="page-header">
+        <CENTER><h1>Cadastro do Carro</h1></CENTER>        
+       </div>    
+            
+        <div class="form-group row"><!-- Div do input do nome-->
+            <label for="txtModelo" class="col-sm-1 col-form-label">Modelo: </label>
+             <div class="col-sm-11">
+                <input type="text" class="form-control" id="txtModelo" name="txtModelo" placeholder="Digite aqui o modelo"/>
+             </div>
+        </div>
+        <br/>
+        
+        <div class="form-group row"><!-- Div do input do nome-->
+            <label for="txtMarca" class="col-sm-1 col-form-label">Marca: </label>
+             <div class="col-sm-11">
+                <input type="text" class="form-control" id="txtMarca" name="txtMarca" placeholder="Digite aqui a marca"/>
+             </div>
+        </div>
+        <br/>
+        
+        <div class="form-group row"><!-- Div do input do nome-->
+            <label for="txtPlaca" class="col-sm-1 col-form-label">Placa: </label>
+             <div class="col-sm-11">
+                <input type="text" class="form-control" id="txtPlaca" name="txtPlaca" placeholder="Digite aqui a placa"/>
+             </div>
+        </div>
+        <br/>
+        
+        <div class="form-group row"><!-- Div do input do nome-->
+            <label for="txtAno" class="col-sm-1 col-form-label">Ano: </label>
+             <div class="col-sm-11">
+                <input type="text" class="form-control" id="txtAno" name="txtAno" placeholder="Digite aqui o ano"/>
+             </div>
+        </div>
+        <br/>
+              
+        <button onclick="salvar()"> Salvar</button>
+        <button onclick="consultar()">Listar</button>
+        
+        
+        <script>
+            function salvar()
+            {
+                var modelo = document.getElementById("txtModelo").value;
+                var marca = document.getElementById("txtMarca").value;
+                var placa = document.getElementById("txtPlaca").value;
+                var ano = document.getElementById("txtAno").value;
+                
+                
+                
+                var xmlHTTP_PUT = new XMLHttpRequest();//criando instancia dessa conexao via http, conectando com servico via HTTP
+                var url = "http://localhost:8084/PrjWS_CadCarro/wr/c";
+                //192.168.43.134 usar encima
+                xmlHTTP_PUT.open("PUT", url, true);//Vai conectar ao serviço via PUT
+                xmlHTTP_PUT.setRequestHeader('Content-type', 'application/json');//Tem de informar que vou receber o JSON
+                xmlHTTP_PUT.send('{"modelo":"'+modelo+'","marca":"'+marca+'","placa":"'+placa+'","ano":'+ano+'}');
+            }
+            
+            function consultar()
+            {
+                var xmlHTTP_GET = new XMLHttpRequest();
+                
+                var url = 'http://localhost:8084/PrjWS_CadCarro/wr/c';
+                
+                xmlHTTP_GET.onreadystatechange = function()
+                {
+                    if(xmlHTTP_GET.readyState == 4 && xmlHTTP_GET.status == 200){//Quero saber qual estado da minha conexao
+                        var lstC = JSON.parse(xmlHTTP_GET.responseText);//Busca os dados e retorna em JSON
+                        listarCarros(lstC);
+                    }
+                };
+                
+                xmlHTTP_GET.open("GET", url, true);
+                xmlHTTP_GET.send();
+                
+                function listarCarros(lstC)
+                {
+                    
+                    var out = '<TABLE class="table table-striped table-bordered table-hover table-bordered" border=2> <tr><th>MODELO</th><th>MARCA</th><th>PLACA</th><th>ANO</th></tr>';
+                    var i;
+                    for(i=0; i<lstC.length; i++){
+                        out += '<tr><td>'+lstC[i].modelo+'</td><td>'+lstC[i].marca+'</td><td>'+lstC[i].placa+'</td><td>'+lstC[i].ano+'</td><tr>';
+                    }
+                    out += '</table>';
+                    document.getElementById("conteudo").innerHTML = out;
+                }
+            }
+        </script>
+        
+        </div>
+    </body>
+</html>
